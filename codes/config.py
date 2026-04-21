@@ -19,24 +19,44 @@ if sys.stderr and hasattr(sys.stderr, "reconfigure"):
 
 from pathlib import Path
 
-# ── Project root (parent of codes/) ──────────────────────────────────────────
-ROOT = Path(__file__).resolve().parent.parent
+# ── Project roots ────────────────────────────────────────────────────────────
+# This repo has historically had datasets either:
+# - inside Nepali_Voice_Assistant/data/..., OR
+# - at the workspace root data/...
+# We support BOTH to avoid "file not found" when running scripts.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent           # .../Nepali_Voice_Assistant
+WORKSPACE_ROOT = PROJECT_ROOT.parent                            # .../Research_Assignment
+ROOT = PROJECT_ROOT  # Backward compatible name used across scripts
+
+def _pick_existing_dir(*candidates: Path) -> Path:
+    for p in candidates:
+        if p.exists():
+            return p
+    return candidates[0]
 
 # ── Data ─────────────────────────────────────────────────────────────────────
-DATA_DIR        = ROOT / "data" / "data_for_training"
+DATA_ROOT = _pick_existing_dir(PROJECT_ROOT / "data", WORKSPACE_ROOT / "data")
+DATA_DIR        = DATA_ROOT / "data_for_training"
 AUDIO_DIR       = DATA_DIR / "audio_data"
-QA_EXCEL        = DATA_DIR / "question_answer_final.xlsx"
+QA_EXCEL        = DATA_DIR / "question_answer_clean.xlsx"
+CLEAN_XL        = QA_EXCEL  # Alias for training scripts
 
 # ── Outputs ───────────────────────────────────────────────────────────────────
-OUTPUTS_DIR     = ROOT / "outputs"
+OUTPUTS_DIR     = PROJECT_ROOT / "outputs"
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Models ────────────────────────────────────────────────────────────────────
-MODELS_DIR      = ROOT / "models"
-VOSK_MODEL_DIR  = MODELS_DIR / "vosk-model-small-hi-0.22"
-VOSK_MODEL_URL  = "https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip"
+MODELS_DIR      = PROJECT_ROOT / "models"
+WHISPER_MODEL_SIZE = "base"  # ~140MB - much better for Nepali than 'tiny'
+WHISPER_DEVICE     = "cpu"
+WHISPER_COMPUTE    = "int8"  # highly compressed integer quantization for Raspberry Pi CPU
 
-SVM_MODEL_PATH  = OUTPUTS_DIR / "intent_svm.pkl"
+# Unified names for optimized scripts
+MODEL_PATH      = OUTPUTS_DIR / "final_optimized_svm.pkl"
+KB_INDEX_PATH   = OUTPUTS_DIR / "kb_index.pkl"
+
+# Legacy paths (for backward compatibility during migration)
+SVM_MODEL_PATH  = MODEL_PATH
 TFIDF_PATH      = OUTPUTS_DIR / "tfidf_vectorizer.pkl"
 
 WAV_CACHE_DIR   = OUTPUTS_DIR / "wav_cache"   # converted .m4a → .wav stored here

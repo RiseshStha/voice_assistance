@@ -1,0 +1,12 @@
+numpy
+pandas
+scikit-learn
+imbalanced-learn
+matplotlib
+seaborn
+openpyxl
+faster-whisper
+sounddevice
+pyttsx3
+jupyter
+ipykernel
