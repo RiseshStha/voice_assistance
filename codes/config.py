@@ -41,6 +41,23 @@ AUDIO_DIR       = DATA_DIR / "audio_data"
 QA_EXCEL        = DATA_DIR / "question_answer_clean.xlsx"
 CLEAN_XL        = QA_EXCEL  # Alias for training scripts
 
+# Raw dataset (we prefer the newest "update" file if present)
+RAW_QA_EXCEL_CANDIDATES = [
+    DATA_DIR / "question_answer_final_update.xlsx",
+    DATA_DIR / "question_answer_final_update.xls",
+    DATA_DIR / "question_answer_final_updated.xlsx",
+    DATA_DIR / "question_answer_final_updated.xls",
+    DATA_DIR / "question_answer_final.xlsx",
+    DATA_DIR / "question_answer_final.xls",
+]
+
+def pick_raw_qa_excel() -> Path:
+    for p in RAW_QA_EXCEL_CANDIDATES:
+        if p.exists():
+            return p
+    # Default to the first candidate; downstream will raise a clear error
+    return RAW_QA_EXCEL_CANDIDATES[0]
+
 # ── Outputs ───────────────────────────────────────────────────────────────────
 OUTPUTS_DIR     = PROJECT_ROOT / "outputs"
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,9 @@
+python .\codes\data_prep.py
+
+python .\codes\train_model.py
+
+python .\codes\evaluate_and_benchmark.py
+
+python .\codes\build_kb.py
+
+python .\codes\app.py

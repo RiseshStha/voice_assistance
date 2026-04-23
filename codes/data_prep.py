@@ -14,8 +14,8 @@ from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 # Project Path Settings
-from config import ROOT, QA_EXCEL as CLEAN_DATA
-RAW_DATA = ROOT / "data" / "data_for_training" / "question_answer_final.xlsx"
+from config import ROOT, QA_EXCEL as CLEAN_DATA, pick_raw_qa_excel
+RAW_DATA = pick_raw_qa_excel()
 OUTPUT_DIR = ROOT / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
@@ -31,12 +31,26 @@ def normalize_nepali(text):
     return text
 
 def main():
-    print("Loading raw textbook data...")
+    print(f"Loading raw textbook data from {RAW_DATA}...")
     df = pd.read_excel(RAW_DATA)
     df.columns = [c.strip().lower() for c in df.columns]
     
     # Preprocessing
     df['question'] = df['question'].apply(normalize_nepali)
+    required = ["question", "intent"]
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise KeyError(f"Dataset is missing required column(s): {missing}. Found columns: {list(df.columns)}")
+
+    # Handle missing grade (if present) by filling with nearest available value
+    if "grade" in df.columns:
+        g = pd.to_numeric(df["grade"], errors="coerce")
+        # "Nearest" in row order: interpolate to closest non-null neighbor, then back/forward fill edges
+        g = g.interpolate(method="nearest", limit_direction="both")
+        g = g.ffill().bfill()
+        df["grade"] = g
+
+    # Drop missing essentials; keep optional fields (like answer, topic, etc.) if they exist
     df = df.dropna(subset=['question', 'intent'])
     df = df[df['question'].str.len() > 3] # Filter outliers
 

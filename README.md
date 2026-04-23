@@ -44,6 +44,17 @@ This writes:
 - `outputs/final_optimized_svm.pkl`
 - `outputs/confusion_matrix.png`
 
+### 2b) Evaluate + visualizations + latency benchmarks (for marking)
+
+```powershell
+python .\codes\evaluate_and_benchmark.py
+```
+
+This writes:
+- `outputs/eval_report.json` + `outputs/eval_report.txt`
+- `outputs/confusion_matrix_eval.png` (confusion matrix heatmap)
+- `outputs/accuracy_table.png` (accuracy results table)
+
 ### 3) Build the Answer KB (for real answers)
 
 ```powershell
