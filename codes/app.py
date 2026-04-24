@@ -5,6 +5,7 @@ The main entry point for the Nepali Voice Assistant.
 Integrates ML Classification, Voice Engine, and User UI.
 """
 import sys, pickle
+import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
@@ -29,11 +30,19 @@ class NepaliAssistantApp:
                 self.clf = pickle.load(f)
             self.stt = voice_engine.load_stt_model()
             self.kb = self._load_or_build_kb()
+            hotword_texts = list(self.kb.get("questions", [])) + list(self.kb.get("answers", []))
+            voice_engine.set_domain_hotwords(hotword_texts)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load models: {e}")
             sys.exit(1)
 
         self._build_ui()
+        self._load_audio_devices()
+        if not voice_engine.has_native_nepali_tts():
+            self._append_line(
+                "System note: Nepali TTS is unavailable because eSpeak/eSpeak-NG is not installed. "
+                "Current fallback may not speak Nepali correctly.\n\n"
+            )
 
     def _build_ui(self):
         self.root.columnconfigure(0, weight=1)
@@ -87,13 +96,23 @@ class NepaliAssistantApp:
         self.send_btn = ttk.Button(input_panel, text="Send", command=self.on_send_prompt)
         self.send_btn.grid(row=0, column=2, sticky="e")
 
-        ttk.Label(input_panel, text="Mic duration").grid(row=1, column=0, sticky="w", pady=(10, 0))
-        self.mic_seconds = tk.IntVar(value=4)
+        ttk.Label(input_panel, text="Max listen time").grid(row=1, column=0, sticky="w", pady=(10, 0))
+        self.mic_seconds = tk.IntVar(value=10)
         self.mic_spin = ttk.Spinbox(input_panel, from_=2, to=12, textvariable=self.mic_seconds, width=6)
         self.mic_spin.grid(row=1, column=1, sticky="w", padx=(8, 0), pady=(10, 0))
 
         self.listen_btn = ttk.Button(input_panel, text="Start Listening", command=self.on_listen)
         self.listen_btn.grid(row=1, column=2, sticky="e", pady=(10, 0))
+
+        ttk.Label(input_panel, text="Input device").grid(row=2, column=0, sticky="w", pady=(10, 0))
+        self.mic_device_var = tk.StringVar()
+        self.mic_device_combo = ttk.Combobox(
+            input_panel,
+            textvariable=self.mic_device_var,
+            state="readonly",
+            width=48,
+        )
+        self.mic_device_combo.grid(row=2, column=1, columnspan=2, sticky="ew", padx=(8, 0), pady=(10, 0))
 
         # Output panel
         output_panel = ttk.Labelframe(body, text="Conversation / Output", padding=(12, 10))
@@ -147,6 +166,57 @@ class NepaliAssistantApp:
         X = vectorizer.fit_transform(questions)
         return {"vectorizer": vectorizer, "X": X, "questions": questions, "answers": answers, "intents": intents}
 
+    def _load_audio_devices(self):
+        self.audio_devices = voice_engine.list_input_devices()
+        values = []
+        selected_value = None
+        preferred_id = voice_engine.choose_default_input_device()
+        for dev in self.audio_devices:
+            label = (
+                f"{dev['id']}: {dev['name']} [{dev['hostapi']}, "
+                f"{int(dev['default_samplerate'])} Hz]"
+            )
+            values.append(label)
+            if dev["id"] == preferred_id:
+                selected_value = label
+
+        self.mic_device_combo["values"] = values
+        if selected_value:
+            self.mic_device_var.set(selected_value)
+        elif values:
+            self.mic_device_combo.current(0)
+
+    def _selected_device_id(self):
+        value = (self.mic_device_var.get() or "").strip()
+        if not value:
+            return None
+        try:
+            return int(value.split(":", 1)[0])
+        except Exception:
+            return None
+
+    def _normalize_query(self, text: str) -> str:
+        """
+        Align live user input with the cleaned dataset used for training/KB lookup.
+        """
+        text = str(text or "").strip()
+        text = re.sub(r"^[\d\u0966-\u096F]+[\.\)\s\u0964]+", "", text).strip()
+        noise = [
+            "लेख्नुहोस्।",
+            "लेख्नुहोस्",
+            "बताउनुहोस्।",
+            "बताउनुहोस्",
+            "उदाहरण दिनुहोस्।",
+            "उदाहरण दिनुहोस्",
+            "उल्लेख गर्नुहोस्।",
+            "उल्लेख गर्नुहोस्",
+        ]
+        for word in noise:
+            text = text.replace(word, "").strip()
+
+        text = re.sub(r"\s+", " ", text)
+        return text.strip(" ?।.!," )
+
     def _retrieve_answer(self, user_text: str, predicted_intent: str, min_sim: float = 0.25):
         """
         Retrieve the best matching answer from the KB (optionally restricted to predicted intent).
@@ -186,17 +256,28 @@ class NepaliAssistantApp:
 
     def on_listen(self):
         if getattr(self, "_busy", False):
+            if getattr(self, "_listening", False):
+                self.status_var.set("Stopping recording...")
+                self._stop_listen_event.set()
             return
 
         self._busy = True
-        self.listen_btn.configure(state="disabled")
+        self._listening = True
+        self._stop_listen_event = threading.Event()
+        self.listen_btn.configure(text="Stop Listening")
         self.send_btn.configure(state="disabled")
-        self.status_var.set("Listening... speak clearly into the mic.")
+        self.status_var.set("Listening... speak, then click Stop Listening when you finish.")
 
         def worker():
             try:
                 seconds = int(self.mic_seconds.get())
-                text = voice_engine.listen_and_transcribe(self.stt, duration_s=seconds)
+                device_id = self._selected_device_id()
+                text = voice_engine.listen_and_transcribe(
+                    self.stt,
+                    duration_s=seconds,
+                    device=device_id,
+                    stop_event=self._stop_listen_event,
+                )
                 self._ui(lambda: self._append_line(f"User (voice): {text or '[no speech detected]'}\n"))
                 self._ui(lambda: self.classify_and_respond(text))
             except Exception as e:
@@ -223,12 +304,14 @@ class NepaliAssistantApp:
 
     def _set_ready(self):
         self.status_var.set("Ready")
-        self.listen_btn.configure(state="normal")
+        self.listen_btn.configure(state="normal", text="Start Listening")
         self.send_btn.configure(state="normal")
         self._busy = False
+        self._listening = False
         
     def classify_and_respond(self, text):
-        text = (text or "").strip()
+        original_text = (text or "").strip()
+        text = self._normalize_query(original_text)
         if not text:
             self.status_var.set("Ready (no input)")
             self.conf_bar["value"] = 0
@@ -263,14 +346,14 @@ class NepaliAssistantApp:
         if answer:
             self._append_line(f"Answer: {answer}\n")
             self._append_line(f"(matched sim={sim:.2f})\n\n")
-            voice_engine.speak_text(answer)
+            voice_engine.speak_text_async(answer)
         else:
             self._append_line("Answer: माफ गर्नुहोस्, यस प्रश्नको ठ्याक्कै उत्तर डाटासेटमा भेटिएन।\n")
             if matched_q:
                 self._append_line(f"(closest sim={sim:.2f}, closest question: {matched_q})\n\n")
             else:
                 self._append_line("\n")
-            voice_engine.speak_text("माफ गर्नुहोस्, यस प्रश्नको ठ्याक्कै उत्तर भेटिएन।")
+            voice_engine.speak_text_async("माफ गर्नुहोस्, यस प्रश्नको ठ्याक्कै उत्तर भेटिएन।")
 
 if __name__ == "__main__":
     root = tk.Tk()
