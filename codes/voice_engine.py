@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import wave
 from collections import Counter
 from difflib import get_close_matches
@@ -426,22 +427,24 @@ def speak_text(text):
             kwargs = {}
             if sys.platform == "win32":
                 kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
-                wav_path = Path(OUTPUTS_DIR) / "last_tts_output.wav"
-                txt_path = Path(OUTPUTS_DIR) / "last_tts_input.txt"
-                txt_path.write_text(text, encoding="utf-8")
-                cmd = espeak_base + [
-                    "-v", voice_code,
-                    "-a", "170",
-                    "-s", "145",
-                    "-f", str(txt_path.resolve()),
-                    "-w", str(wav_path.resolve()),
-                ]
-                subprocess.run(cmd, check=True, **kwargs)
-                if wav_path.exists():
-                    import winsound
+                with tempfile.TemporaryDirectory(prefix="nepali_tts_") as tmpdir:
+                    tmpdir_path = Path(tmpdir)
+                    wav_path = tmpdir_path / "tts_output.wav"
+                    txt_path = tmpdir_path / "tts_input.txt"
+                    txt_path.write_text(text, encoding="utf-8")
+                    cmd = espeak_base + [
+                        "-v", voice_code,
+                        "-a", "170",
+                        "-s", "145",
+                        "-f", str(txt_path.resolve()),
+                        "-w", str(wav_path.resolve()),
+                    ]
+                    subprocess.run(cmd, check=True, **kwargs)
+                    if wav_path.exists():
+                        import winsound
 
-                    winsound.PlaySound(str(wav_path), winsound.SND_FILENAME)
-                    return
+                        winsound.PlaySound(str(wav_path), winsound.SND_FILENAME)
+                        return
             else:
                 cmd = espeak_base + ["-v", voice_code, text]
                 subprocess.run(cmd, check=True, **kwargs)

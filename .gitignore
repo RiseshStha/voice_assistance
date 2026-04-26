@@ -61,6 +61,7 @@ env.bak/
 venv.bak/
 
 # ── Project Specific ──
+documents/
 
 # Downloaded Machine Learning Models
 models/

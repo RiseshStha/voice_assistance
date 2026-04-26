@@ -2,15 +2,10 @@
 evaluate_and_benchmark.py
 =========================
 Reproducible evaluation + visualization + latency benchmarks for marking.
-
-Generates (in outputs/):
-- eval_report.json / eval_report.txt
-- confusion_matrix_eval.png
-- accuracy_table.png
+Evaluates SVM against comparative baseline models.
 """
 
 from __future__ import annotations
-
 import json
 import time
 from dataclasses import dataclass
@@ -28,11 +23,9 @@ from sklearn.metrics import (
     f1_score,
 )
 from sklearn.model_selection import train_test_split
-
 import pickle
 
 from config import CLEAN_XL, MODEL_PATH, KB_INDEX_PATH, OUTPUTS_DIR
-
 
 @dataclass
 class LatStats:
@@ -41,7 +34,6 @@ class LatStats:
     p95: float
     max: float
     min: float
-
 
 def _ms_stats(samples_ms: list[float]) -> LatStats:
     arr = np.asarray(samples_ms, dtype=float)
@@ -55,21 +47,7 @@ def _ms_stats(samples_ms: list[float]) -> LatStats:
         min=float(np.min(arr)),
     )
 
-
-def _load_model():
-    if not Path(MODEL_PATH).exists():
-        raise FileNotFoundError(
-            f"Trained model not found at {MODEL_PATH}. Run: python .\\codes\\train_model.py"
-        )
-    with open(MODEL_PATH, "rb") as f:
-        return pickle.load(f)
-
-
 def _load_kb():
-    """
-    Load retrieval KB if present; otherwise build quickly from CLEAN_XL.
-    Mirrors the logic used in app.py so latency numbers match the demo.
-    """
     try:
         if Path(KB_INDEX_PATH).exists():
             with open(KB_INDEX_PATH, "rb") as f:
@@ -81,7 +59,6 @@ def _load_kb():
         pass
 
     from sklearn.feature_extraction.text import TfidfVectorizer
-
     df = pd.read_excel(CLEAN_XL).dropna(subset=["question", "answer", "intent"])
     questions = df["question"].astype(str).tolist()
     answers = df["answer"].astype(str).tolist()
@@ -96,41 +73,10 @@ def _load_kb():
     X = vectorizer.fit_transform(questions)
     return {"vectorizer": vectorizer, "X": X, "questions": questions, "answers": answers, "intents": intents}
 
-
-def _retrieve_answer(kb: dict, user_text: str, predicted_intent: str, min_sim: float = 0.25):
-    user_text = (user_text or "").strip()
-    if not user_text:
-        return None, 0.0, None
-
-    vec = kb["vectorizer"]
-    X = kb["X"]
-    q_vec = vec.transform([user_text])
-
-    intents = kb.get("intents")
-    mask_idx = None
-    if intents is not None and predicted_intent:
-        mask_idx = [i for i, it in enumerate(intents) if it == predicted_intent]
-
-    if mask_idx:
-        X_sub = X[mask_idx]
-        sims_sub = (X_sub @ q_vec.T).toarray().reshape(-1)
-        best_local = int(np.argmax(sims_sub))
-        best_idx = mask_idx[best_local]
-        best_sim = float(sims_sub[best_local])
-    else:
-        sims = (X @ q_vec.T).toarray().reshape(-1)
-        best_idx = int(np.argmax(sims))
-        best_sim = float(sims[best_idx])
-
-    if best_sim < min_sim:
-        return None, best_sim, kb["questions"][best_idx]
-    return kb["answers"][best_idx], best_sim, kb["questions"][best_idx]
-
-
 def main():
     OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # ---- Load data (same split as training) ----
+    # ---- Load data ----
     df = pd.read_excel(CLEAN_XL)
     df = df.dropna(subset=["question", "intent"])
     X = df["question"].astype(str).values
@@ -140,47 +86,109 @@ def main():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # ---- Load model + evaluate ----
-    model = _load_model()
-    y_pred = model.predict(X_test)
+    models_to_eval = {
+        "Linear SVM (Proposed)": MODEL_PATH,
+        "Logistic Regression": OUTPUTS_DIR / "model_lr.pkl",
+        "KNN (k=7, distance)": OUTPUTS_DIR / "model_knn.pkl",
+    }
 
-    acc = float(accuracy_score(y_test, y_pred))
-    macro_f1 = float(f1_score(y_test, y_pred, average="macro"))
-    weighted_f1 = float(f1_score(y_test, y_pred, average="weighted"))
+    metrics_rows = []
+    full_report = {
+        "intent_accuracy": None,
+        "latency": None,
+    }
+    
+    # Preload KB for latency benchmark
+    kb = _load_kb()
+    nq = min(50, len(X_test))
+    rng = np.random.default_rng(42)
+    idx = rng.choice(len(X_test), size=nq, replace=False)
+    queries = X_test[idx].tolist()
 
-    report_dict = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
+    for name, path in models_to_eval.items():
+        if not path.exists():
+            print(f"Skipping {name}, not found at {path}")
+            continue
+            
+        with open(path, "rb") as f:
+            model = pickle.load(f)
+            
+        y_pred = model.predict(X_test)
+        acc = float(accuracy_score(y_test, y_pred))
+        macro_f1 = float(f1_score(y_test, y_pred, average="macro"))
+        weighted_f1 = float(f1_score(y_test, y_pred, average="weighted"))
+        
+        # Latency Benchmark
+        intent_ms = []
+        for q in queries:
+            t0 = time.perf_counter()
+            _ = model.predict([q])[0]
+            t1 = time.perf_counter()
+            intent_ms.append((t1 - t0) * 1000.0)
+            
+        lat_stats = _ms_stats(intent_ms)
+        
+        metrics_rows.append([
+            name, 
+            f"{acc*100:.2f}%", 
+            f"{macro_f1*100:.2f}%", 
+            f"{weighted_f1*100:.2f}%",
+            f"{lat_stats.mean:.1f} ms"
+        ])
 
-    labels = sorted(np.unique(y))
-    cm = confusion_matrix(y_test, y_pred, labels=labels).tolist()
+        if name == "Linear SVM (Proposed)":
+            labels = sorted(np.unique(y))
+            cm = confusion_matrix(y_test, y_pred, labels=labels).tolist()
+            cm_png = OUTPUTS_DIR / "confusion_matrix_eval.png"
+            report_json = OUTPUTS_DIR / "classification_report_eval.json"
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(
+                np.asarray(cm),
+                annot=True,
+                fmt="d",
+                cmap="Blues",
+                xticklabels=labels,
+                yticklabels=labels,
+            )
+            plt.title("Confusion Matrix — Intent Classification (SVM)")
+            plt.xlabel("Predicted")
+            plt.ylabel("True")
+            plt.xticks(rotation=45, ha="right")
+            plt.yticks(rotation=0)
+            plt.tight_layout()
+            plt.savefig(cm_png, dpi=220)
+            plt.close()
+            with open(report_json, "w", encoding="utf-8") as f:
+                clf_report = classification_report(
+                    y_test, y_pred, labels=labels, output_dict=True, zero_division=0
+                )
+                json.dump(clf_report, f, ensure_ascii=False, indent=2)
 
-    # ---- Confusion matrix heatmap (visualization) ----
-    cm_png = OUTPUTS_DIR / "confusion_matrix_eval.png"
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(
-        np.asarray(cm),
-        annot=True,
-        fmt="d",
-        cmap="Blues",
-        xticklabels=labels,
-        yticklabels=labels,
-    )
-    plt.title("Confusion Matrix — Intent Classification (SVM)")
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.xticks(rotation=45, ha="right")
-    plt.yticks(rotation=0)
-    plt.tight_layout()
-    plt.savefig(cm_png, dpi=220)
-    plt.close()
+            full_report["intent_accuracy"] = {
+                "test_samples": int(len(y_test)),
+                "accuracy": acc,
+                "accuracy_pct": round(acc * 100, 2),
+                "macro_f1": macro_f1,
+                "weighted_f1": weighted_f1,
+                "report": clf_report,
+                "confusion_matrix": cm,
+                "labels": labels,
+                "artifacts": {
+                    "confusion_matrix_heatmap_png": str(cm_png),
+                    "accuracy_table_png": str(OUTPUTS_DIR / "accuracy_table.png"),
+                },
+            }
+            full_report["latency"] = {
+                "n_queries": int(nq),
+                "with_tts": False,
+                "intent": lat_stats.__dict__,
+            }
 
     # ---- Accuracy results table (visualization) ----
     table_png = OUTPUTS_DIR / "accuracy_table.png"
-    metrics_rows = [
-        ["SVM (LinearSVC)", f"{acc*100:.2f}%", f"{macro_f1*100:.2f}%", f"{weighted_f1*100:.2f}%"],
-    ]
-    col_labels = ["Model", "Accuracy", "Macro F1", "Weighted F1"]
+    col_labels = ["Model", "Accuracy", "Macro F1", "Weighted F1", "Inference Latency"]
 
-    fig, ax = plt.subplots(figsize=(9.2, 2.2))
+    fig, ax = plt.subplots(figsize=(10, 2.5))
     ax.axis("off")
     tbl = ax.table(
         cellText=metrics_rows,
@@ -192,98 +200,73 @@ def main():
     tbl.auto_set_font_size(False)
     tbl.set_fontsize(10)
     tbl.scale(1, 1.5)
-    plt.title("Accuracy Results Table (Test Split)")
+    
+    # Make SVM bold if present in the table
+    for row_idx, row in enumerate(metrics_rows, start=1):
+        if row[0] == "Linear SVM (Proposed)":
+            for col_idx in range(len(col_labels)):
+                tbl[(row_idx, col_idx)].get_text().set_weight("bold")
+            break
+        
+    plt.title("Model Comparison Table (Test Split)")
     plt.tight_layout()
     plt.savefig(table_png, dpi=220)
     plt.close(fig)
 
-    # ---- Latency benchmarks (intent + retrieval + total) ----
-    kb = _load_kb()
-    nq = min(50, len(X_test))
-    rng = np.random.default_rng(42)
-    idx = rng.choice(len(X_test), size=nq, replace=False)
-    queries = X_test[idx].tolist()
+    if full_report["intent_accuracy"] is not None:
+        # Retrieval/total latency are only meaningful for the proposed SVM pipeline report.
+        kb_vectorizer = kb["vectorizer"]
+        kb_X = kb["X"]
+        kb_intents = np.asarray(kb["intents"])
+        retrieval_ms = []
+        total_ms = []
 
-    intent_ms: list[float] = []
-    retrieval_ms: list[float] = []
-    total_ms: list[float] = []
+        with open(MODEL_PATH, "rb") as f:
+            svm_model = pickle.load(f)
 
-    for q in queries:
-        t0 = time.perf_counter()
-        t_int0 = time.perf_counter()
-        intent = model.predict([q])[0]
-        t_int1 = time.perf_counter()
+        for q in queries:
+            t0 = time.perf_counter()
+            pred = svm_model.predict([q])[0]
+            t1 = time.perf_counter()
 
-        t_ret0 = time.perf_counter()
-        _retrieve_answer(kb, q, intent)
-        t_ret1 = time.perf_counter()
-        t1 = time.perf_counter()
+            qv = kb_vectorizer.transform([q])
+            mask = kb_intents == pred
+            if np.any(mask):
+                _ = (qv @ kb_X[mask].T).toarray()
+            t2 = time.perf_counter()
 
-        intent_ms.append((t_int1 - t_int0) * 1000.0)
-        retrieval_ms.append((t_ret1 - t_ret0) * 1000.0)
-        total_ms.append((t1 - t0) * 1000.0)
+            retrieval_ms.append((t2 - t1) * 1000.0)
+            total_ms.append((t2 - t0) * 1000.0)
 
-    intent_stats = _ms_stats(intent_ms)
-    retrieval_stats = _ms_stats(retrieval_ms)
-    total_stats = _ms_stats(total_ms)
+        retrieval_stats = _ms_stats(retrieval_ms)
+        total_stats = _ms_stats(total_ms)
+        full_report["latency"]["retrieval"] = retrieval_stats.__dict__
+        full_report["latency"]["total"] = total_stats.__dict__
 
-    out = {
-        "intent_accuracy": {
-            "test_samples": int(len(X_test)),
-            "accuracy": acc,
-            "accuracy_pct": round(acc * 100.0, 2),
-            "macro_f1": round(macro_f1, 6),
-            "weighted_f1": round(weighted_f1, 6),
-            "report": report_dict,
-            "confusion_matrix": cm,
-            "labels": labels,
-            "artifacts": {
-                "confusion_matrix_heatmap_png": str(cm_png),
-                "accuracy_table_png": str(table_png),
-            },
-        },
-        "latency": {
-            "n_queries": int(nq),
-            "with_tts": False,
-            "intent": intent_stats.__dict__,
-            "retrieval": retrieval_stats.__dict__,
-            "total": total_stats.__dict__,
-        },
-    }
+        eval_json = OUTPUTS_DIR / "eval_report.json"
+        eval_txt = OUTPUTS_DIR / "eval_report.txt"
+        with open(eval_json, "w", encoding="utf-8") as f:
+            json.dump(full_report, f, ensure_ascii=False, indent=2)
 
-    # ---- Write reports ----
-    json_path = OUTPUTS_DIR / "eval_report.json"
-    txt_path = OUTPUTS_DIR / "eval_report.txt"
+        summary = (
+            "NEPALI STUDENT VOICE ASSISTANT - EVALUATION REPORT\n"
+            "============================================================\n\n"
+            "[A] INTENT CLASSIFICATION (SVM)\n"
+            f"  Test Accuracy  : {full_report['intent_accuracy']['accuracy_pct']:.2f}%\n"
+            f"  Macro F1       : {full_report['intent_accuracy']['macro_f1'] * 100:.2f}%\n"
+            f"  Weighted F1    : {full_report['intent_accuracy']['weighted_f1'] * 100:.2f}%\n\n"
+            "[B] LATENCY (ms) - per query (no TTS)\n"
+            f"  Intent   mean/p95 : {full_report['latency']['intent']['mean']:.1f} / {full_report['latency']['intent']['p95']:.1f} ms\n"
+            f"  Retrieval mean/p95: {full_report['latency']['retrieval']['mean']:.1f} / {full_report['latency']['retrieval']['p95']:.1f} ms\n"
+            f"  Total mean/p95    : {full_report['latency']['total']['mean']:.1f} / {full_report['latency']['total']['p95']:.1f} ms\n\n"
+            "[C] VISUALIZATIONS\n"
+            f"  Confusion matrix heatmap: {OUTPUTS_DIR / 'confusion_matrix_eval.png'}\n"
+            f"  Accuracy results table  : {table_png}\n"
+        )
+        with open(eval_txt, "w", encoding="utf-8") as f:
+            f.write(summary)
 
-    json_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    txt = []
-    txt.append("NEPALI STUDENT VOICE ASSISTANT — EVALUATION REPORT")
-    txt.append("=" * 60)
-    txt.append("")
-    txt.append("[A] INTENT CLASSIFICATION (SVM)")
-    txt.append(f"  Test Accuracy  : {acc*100:.2f}%")
-    txt.append(f"  Macro F1       : {macro_f1*100:.2f}%")
-    txt.append(f"  Weighted F1    : {weighted_f1*100:.2f}%")
-    txt.append("")
-    txt.append("[B] LATENCY (ms) — per query (no TTS)")
-    txt.append(f"  Intent   mean/p95 : {intent_stats.mean:.1f} / {intent_stats.p95:.1f} ms")
-    txt.append(f"  Retrieval mean/p95: {retrieval_stats.mean:.1f} / {retrieval_stats.p95:.1f} ms")
-    txt.append(f"  Total mean/p95    : {total_stats.mean:.1f} / {total_stats.p95:.1f} ms")
-    txt.append("")
-    txt.append("[C] VISUALIZATIONS")
-    txt.append(f"  Confusion matrix heatmap: {cm_png}")
-    txt.append(f"  Accuracy results table  : {table_png}")
-    txt.append("")
-
-    txt_path.write_text("\n".join(txt), encoding="utf-8")
-
-    print("Saved:")
-    print(" -", json_path)
-    print(" -", txt_path)
-    print(" -", cm_png)
-    print(" -", table_png)
-
+    print("Evaluation Complete. Comparison table saved to", table_png)
 
 if __name__ == "__main__":
     main()
