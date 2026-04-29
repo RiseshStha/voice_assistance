@@ -40,6 +40,8 @@ DATA_DIR        = DATA_ROOT / "data_for_training"
 AUDIO_DIR       = DATA_DIR / "audio_data"
 QA_EXCEL        = DATA_DIR / "question_answer_clean.xlsx"
 CLEAN_XL        = QA_EXCEL  # Alias for training scripts
+BALANCED_QA_EXCEL = DATA_DIR / "question_answer_smote_balanced.xlsx"
+DATA_STATUS_JSON = PROJECT_ROOT / "outputs" / "data_status_summary.json"
 
 # Raw dataset (we prefer the newest "update" file if present)
 RAW_QA_EXCEL_CANDIDATES = [
@@ -82,9 +84,8 @@ WAV_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 # ── Audio ────────────────────────────────────────────────────────────────────
 SAMPLE_RATE     = 16_000   # Vosk Nepali model requires 16 kHz mono PCM-16
 
-# ── Intent labels (7 classes) ─────────────────────────────────────────────────
+# ── Intent labels (6 classes) ─────────────────────────────────────────────────
 INTENTS = [
-    "math_question",
     "science_question",
     "social_question",
     "nepali_language_question",

@@ -1,0 +1,589 @@
+ 
+Student Assignment Brief  
+CONFIDENTIAL DOCUMENT  
+This document is intended solely for Softwarica College of IT & E -Commerce students for their own use in 
+completing their assessed work for this module. It must not be passed to third parties or posted on any website.  
+Contents  
+• Assignment Information  
+• Assessed Module Learning Outcomes  
+• Assignment Task  
+• Marking and Feedback  
+• Assignment Support and Academic Integrity  
+• Assessment Marking Criteria  
+Assignment Information  
+Module Name:  Machine Learning  
+Module Code:  STW7072 CEM  
+Assignment Title:  CW 
+Assignment Due:  30 April. 2026  
+
+Assignment Credit:  15 credits  
+Word Count:  3000  
+Assignment Type:  Project Development  
+Grading:  Percentage Grade (Applied Core Assessment)  
+Assessment Overview  
+You will be provided with an overall grade between 0% and 100%. You have one opportunity to pass the 
+assignment at or above 40%.  
+Important Notice  
+The work you submit for this assignment must be your own independent work . More information is 
+available in the 'Assignment Task' section of this assignment brief.  
+Assessed Module Learning Outcomes  
+Module Learning Outcomes:  
+ 
+Please read all instructions and information carefully.  
+1. This assignment contributes 100% to your final module mark and will assess the following learning 
+outcomes:  
+2. Knowledge  
+3. Knowing a variety of Machine Learning approaches in use in industry or research can help them 
+select and use the best Machine Learning strategies for the challenges that occur.  
+4. Awareness of recent and upcoming developments in machine learning and its applications.  
+5. Skills  
+6. Assess real -world problems and determine which Machine Learning approaches are suitable for 
+their solutions.  
+7. Apply various Machine Learning models and techniques in the solutions of a range of problems, 
+and characterize the expected performance of a model, and compare with other techniques.  
+ 
+ 
+ 
+ 
+ 
+ 
+Assignment Task  
+Task:  
+ 
+• This assignment will involve the development of practical work, software planning for an 
+intelligent application prototype, and the development of that prototype.  
+• You have been issued exercises associated with lab work throughout the module.   
+• The planning and development of the intelligent application prototype will make use of the 
+knowledge and materials that you have been collecting.  
+• Intelligent application prototype in the python programming language using Jupyter Notebook or 
+Google Colab.  
+Project Prototype:  Applying Machine Learning techniques such as clustering and classification to address 
+real-world problems in Nepal.  
+      Context:  
+      You were familiar with many machine learning methods, related ideas, and applications during 
+this module. Several classification techniques were studied, including Generalized Logistic 
+Regression, Linear Discriminant Analysis, Optimized K -nearest Neighbor,  Bayesian and Statistical 
+Methods, Support Vector Machines, and Decision Trees. In addition, we examined feature selection 
+and extraction techniques like Principal Component Analysis as well as clustering algorithms like K -
+means. You must choose an a pplication that relates to a classification, clustering, or anomaly 
+detection problem for this project and investigate the most effective way to use machine learning 
+methods to solve it. You are open to choosing any datasets available.  
+ 
+Sources:  https://www.kaggle.com  or https://archive.ics.uci.edu/ml/datasets.php  and need to apply 
+3 different classification or clustering techniques on it.  
+ 
+ 
+ 
+ 
+      The purpose of this coursework is to  
+• Analyze the core ideas of machine learning, as well as how they are used.  
+• Ensure that a dataset is properly prepared and then assess how  various learning algorithms work 
+on it.  
+• Learn how to choose machine learning methods to address a real -world classification or clustering 
+issue.  
+ 
+     You will be required to:  
+● Write a report on your own, independently (using your own words to describe the 
+deliverable and to highlight your personal contributions as well).  
+● If you are unclear about this, ask the professor.    
+● You are encouraged to regularly submit work in progress for formative feedback to help 
+you improve your final submission.  
+● READ the five samples at the bottom of the "Module Essentials >> Campus : 
+https://www.c4mpus.com/ " Page  before you begin. Understanding the components and 
+requirements of the CW is crucial for you.  
+    The following sections should generally be included in the paper:  
+ 
+● Abstract  
+● The problem is introduced along with a brief literature review of related work in the introduction; 
+if the literature review is longer, it is advised to be in  its own section, as this would be preferable.  
+● Problem and Data set(s) description (where you describe the problem in detail. you want to solve 
+and its significance)  
+● Methods (where you shortly describe the machine learning methods and/or other methods 
+employed to solve the problem)  
+● Experimental setup (including data pre -processing, feature selection and extraction, 
+classification/clustering parameters)  
+● Results  
+● Discussion and Conclusions  
+● References  
+These are general section headings that you can modify to fit the application or problem under 
+investigation. Sections discussing fresh and unique developments or modifications of algorithms relevant 
+to your work may be included.  
+Your code needs to be developed in the python programming language using Jupyter Notebook or Google 
+Colab  and submitted as a zip file. You should include a comprehensive set of instructions  for the 
+successful execution of your code as well as a short screencast/video of your code running  (or a link to 
+the screencast/video if it is too large to include).  
+More information of how to write  a paper is available at the following link: “Crafting Papers on Machine 
+Learning”, by Pat Langley (which can be found here if the previous link does not work 
+http://www.machinelearning.ru/wiki/images/0/07/Langley00crafting.pdf  ). 
+You will need to follow the formatting guidelines of the IEEE Manuscript Template for Conference 
+Proceedings ( https://www.ieee.org/conferences/publishing/templates.html ). 
+As mentioned above, you must choose a real -world classification/clustering issue and one or more 
+suitable dataset(s). Additionally, you can use the links below:  
+UCI Machine Learning Repository: http://archive.ics.uci.edu/ml/ ; 
+ICML 2019 accepted papers: https://icml.cc/Conferences/2019/Schedule?type=Poster ; 
+Kaggle competitions: http://www.kaggle.com/competitions ; 
+Stanford machine learning projects: http://cs229.stanford.edu/projects2013.html , 
+http://cs229.stanford.edu/projects2012.html,http://cs229.stanford.edu/projects2011.html , 
+http://cs229.stanford.edu/projects2016.html  . 
+● You will draft a proposal (no longer than one A4 page) outlining the project's title and must 
+present your tutor with this plan to receive constructive criticism.  
+● You will need to investigate and read related work in the next 2 days. You are welcome to submit 
+an individually written short literature review of your findings in order to get formative feedback.  
+● You must choose, implement, and apply the best machine learning algorithms to the chosen 
+problem throughout the course of the next two to three weeks. If necessary, you must also 
+execute data pre -processing.  
+● You are welcome to report your progress to receive regular feedback from the module leader or 
+tutor in the following 2 support weeks, via some scheduled meetings with the module leader.  
+● You have to write up your final paper and submit it by the deadline specified on the first page.  
+ 
+ 
+ 
+ 
+Submission Instructions  
+Requirement  Details  
+File Naming  NAME_studentID  
+File Format  .docx/.pdf format  
+Submission Method  Campus 4.0 platform (submission link provided 2 weeks before deadline)  
+Marking and Feedback  
+How will my assignment be marked?  
+Your assignment will be marked by the Module Team using standardized criteria.  
+How will I receive grades and feedback?  
+Provisional marks will be released once internally moderated. Feedback will be provided alongside 
+grades release within 2 weeks (10 working days).  
+What will I be marked against?  
+Details of the marking criteria for this task can be found in the Assessment Marking Criteria section at 
+the end of this brief.  
+Grade Requirements  
+You must achieve 40% or above to pass this assessment. Ensure you understand the marking criteria for 
+successful completion.  
+Assignment Support and Academic Integrity  
+Getting Help  
+If you have any questions about this assignment, please meet your respective module leader or teacher 
+for more information.  
+Language Standards  
+You are expected to use effective, accurate, and appropriate language within this assessment task.  
+Academic Integrity  
+The work you submit must be your own. All sources of information need to be acknowledged and 
+attributed; therefore, you must provide references for all sources of information and acknowledge any 
+tools used in the production of your work, excluding Artificial Intelligence (AI) . 
+We use detection software and make routine checks for evidence of academic misconduct. Definitions 
+of academic misconduct, including plagiarism, self -plagiarism, and collusion can be found in Student 
+handbook on Campus 4.0.  
+All cases of suspected academic misconduct are referred to for investigation, the outcomes of which can 
+have profound consequences for your studies.  
+ 
+Support for Students with Disabilities  
+If you have a disability, long -term health condition, specific learning differences , mental health diagnosis 
+or symptoms, contact the Student Support Office for assistance.  
+Unable to Submit on Time?  
+If events prevent you from submitting on time, guidance on extenuating circumstances is available in 
+the Student Handbook or from the Student Support Office.  
+Administration of Assessment  
+Module Leader Name:  Shrawan Thakur  
+Module Leader Email:  stw0049@softwarica.edu.np  
+Assignment Category:  Assignment  
+Attempt Type:  Standard  
+Component Code:  CW 
+Assessment Criteria  
+Marking Criteria for the paper:  
+                                     Criterion                                                                             Marks  
+Technical quality  
+1. Rigor and extent of the experiments.  
+2. Correct application of the selected algorithms 
+and suitability of the methods.  
+3. Data preparation - technical quality.  
+4. Extent of evidence of running the experiments 
+provided in appendices.   
+ 
+ 
+10%  
+10%  
+ 
+ 
+10%  
+10%  
+Evaluation  
+5. Discussion and evaluation of the findings. 
+Why are the outcomes significant? What 
+applications would the findings have for 
+other academics or professionals?  
+6. Is this a "serious" issue or just a minor "toy" 
+issue? In what ways does the paper improve 
+the field of study?   
+ 
+ 
+15%  
+ 
+ 
+ 
+ 
+5% 
+7. Social, ethical, legal,  and professional 
+considerations related to the problem in 
+question.   
+5% 
+Clarity of the writing:  
+8. Is there sufficient information for the reader 
+to reproduce the results? Is the language 
+used on the paper good?  
+9. References and general presentation; Are 
+results clearly presented, with appropriate 
+visualizations?  
+  
+ 
+ 
+10%  
+ 
+ 
+ 
+5% 
+Originality:  
+10. Is there some original approach to the 
+problem, the original  use of techniques?  
+11. Is there any (and how much) difference from 
+previous contributions?   
+ 
+ 
+10%  
+ 
+ 
+10%  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+General marking guidelines (for all coursework)  
+Mark allocation guidelines to students (to be edited by staff per assessment)  
+0-39 40-49 
+ 50-59 
+ 60-69 
+ 70+ 
+ 80+ 
+ 
+Work mainly 
+incomplete and 
+/or weaknesses in 
+most area  Most elements 
+completed; 
+weaknesses 
+outweigh 
+strengths  
+ Most elements 
+are strong, minor 
+weaknesses  
+ Strengths in all 
+elements  
+ Most work 
+exceeds the 
+standard expected  
+ All work 
+substantially 
+exceeds the 
+standard expected  
+ 
+ 
+ 
+ 
+Notes:  
+1. You are expected to use the Coventry University APA style for referencing. For support and advice on this, students can conta ct the Centre 
+for Academic Writing (CAW).  
+2. Please notify your academic services team and module leader of disability support.  
+3. The college cannot take responsibility for any coursework lost or corrupted on disks, laptops, or personal computers. Student s should 
+therefore regularly back up any work and are advised to save it on cloud -based services.  
+4. If there are technical or performance issues that prevent students submitting coursework through the online coursework submis sion 
+system on the day of a coursework deadline, an appropriate extension to the coursework submission deadline will be agreed. Th is 
+extension will normally be 24 hours or the next working day if the deadline falls on a Friday or over the weekend period. Thi s will be 
+communicated via your Module Leader.  
+5. Collusion between students (where sections of your work are like the work submitted by other students in this or previous mod ule cohorts) 
+is taken extremely seriously and will be reported to the academic conduct panel. This applies to both coursework and e xam answers.  
+6. A marked difference between your writing style, knowledge and skill level demonstrated in class discussion, any test conditio ns and that 
+demonstrated in a coursework assignment may result in you having to undertake a Viva Voce to prove the coursework assig nment is 
+entirely your own work.  
+7. If you make use of the services of a proofreader in your work, you must keep your original version and make it available as a  demonstration 
+of your written efforts.  
+8. You must not submit work for assessment that you have already submitted (partially or in full), either for your current cours e or for another 
+qualification of this college, with the exception of resits, where for the coursework, you may be asked to rework and improve a previous 
+attempt. This requirement will be specifically detailed in your assignment brief or specific course or module information. Wh ere earlier 
+work by you is citable, i.e., it has already been published/submitted, you must reference it cle arly. Identical pieces of work submitted 
+concurrently may also be considered to be self -plagiarism.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Mark allocation guidelines to students   
+ 
+GRADE  ANSWER 
+RELEVANCE   ARGUMENT & 
+COHERENCE   EVIDENCE   SUMMARY   
+First  
+  ≥70  Innovative response, 
+answers the   
+question fully  
+addressing the 
+learning 
+objectives  of  A clear, consistent 
+in-depth critical 
+and evaluative  
+argument, 
+displaying the 
+ability to  develop  Wide range of 
+appropriate  
+supporting 
+evidence  
+provided, going 
+beyond the  An 
+outstanding, 
+well-
+structured 
+and 
+appropriately   
+the assessment 
+task.  Evidence 
+of critical 
+analysis, 
+synthesis,  and 
+evaluation.  original ideas from 
+a range of sources . 
+Engagement with 
+theoretical and  
+conceptual 
+analysis.  recommended  
+texts. Correctly   
+referenced.  referenced 
+answer,   
+demonstrating a high 
+degree of   
+understanding and 
+critical analytic skills.  
+Upper 
+Second  
+60-69  A very good 
+attempt to 
+address the 
+objectives  of the 
+assessment task 
+with an emphasis  
+on those elements 
+requiring critical  
+review.   A generally clear 
+line of critical and 
+evaluative  
+arguments  is 
+presented.  
+Relationships 
+between 
+statements and 
+sections  are easy 
+to follow, and 
+there is a sound , 
+coherent 
+structure.   A very good 
+range of relevant 
+sources is used  in 
+a largely 
+consistent way as 
+supporting  
+evidence. There 
+is the use  of 
+some  sources 
+beyond 
+recommended 
+texts . Correctly 
+referenced in the 
+main.   The answer 
+demonstrates a 
+very good 
+understanding  of 
+theories, 
+concepts and 
+issues , with 
+evidence of 
+reading beyond   
+the 
+recommend
+ed 
+minimum. 
+Well 
+organized  
+and clearly 
+written.   
+Lower 
+Second  
+50-59  Competently 
+addresses 
+objectives, but 
+may  contain 
+errors or 
+omissions,  and 
+critical  
+discussion of 
+issues may be 
+superficial  or  Some critical 
+discussion, but the 
+argument is  not 
+always convincing, 
+and the work is 
+descriptive  in 
+places, with over -
+reliance on the  
+work of others.   A range of relevant 
+sources is used, 
+but the  critical 
+evaluation aspect 
+is not fully 
+presented . There is 
+limited use of 
+sources beyond  
+the standard 
+recommended  The answer 
+demonstrate
+s a good 
+understandin
+g of some 
+relevant   
+theories, 
+concepts and 
+issues, but there 
+are some errors  
+limited in 
+places.  materials . 
+Referencing is not 
+always correctly  
+presented.  and irrelevant 
+material 
+included . The 
+structure lacks 
+clarity.  
+Third  
+40-49  Addresses most 
+objectives of the   
+assessment 
+task, with some 
+notable 
+omissions . The 
+structure is 
+unclear in 
+parts , and 
+there is limited 
+analysis.   The work is 
+descriptive with 
+minimal critical  
+discussion and 
+limited 
+theoretical 
+engagement .   A limited range of 
+relevant sources 
+used without  
+appropriate 
+presentation as 
+supporting  or 
+conflicting 
+evidence coupled 
+with  very limited 
+critical analysis.   
+Referencing has 
+some errors.   Some 
+understanding is 
+demonstrated but 
+is incomplete, and 
+there is evidence 
+of limited  
+research on the 
+topic. Poor 
+structure  and 
+presentation, with 
+few and /or poorly 
+presented 
+references.   
+Fail  
+<40 Some deviation 
+from the 
+objectives of the 
+assessment  task. 
+May not 
+consistently 
+address  the 
+assignment 
+briefly . At the 
+lower  end,  the 
+question sets or 
+addresses  the 
+learning 
+outcomes. There 
+is minimal 
+evidence of  Descriptive with 
+no evidence of 
+theoretical 
+engagement , 
+critical discussion 
+or theoretical  
+engagement. At 
+the lower end, it  
+displays  a minimal 
+level of 
+understanding.   Very limited use 
+and application of 
+relevant  sources 
+as supporting 
+evidence.  At the 
+lower end 
+demonstrates a 
+lack of real  
+understanding. 
+Poor presentation 
+of references .   Whilst some 
+relevant material 
+is present, the  
+level of 
+understanding is 
+poor with limited  
+evidence of wider 
+reading. Poor   
+structure and 
+poor 
+presentation, 
+including 
+referencing . At 
+the lower end 
+there is evidence  
+of a lack of  
+analysis or   
+evaluation.  comprehension, 
+resulting  in an 
+assignment that is 
+well below  the 
+required standard.  
+Late 
+submissio
+n  0   0   0   0  
+ 
+ 
+Softwarica College of IT & E -Commerce | In collaboration with Coventry University  
+This document is confidential and intended solely for enrolled students.  

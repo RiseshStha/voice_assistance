@@ -248,6 +248,32 @@ def main():
         with open(eval_json, "w", encoding="utf-8") as f:
             json.dump(full_report, f, ensure_ascii=False, indent=2)
 
+        # ---- Latency Bar Chart (visualization) ----
+        latency_png = OUTPUTS_DIR / "fig_latency.png"
+        stages = ["Intent Classification", "KB Retrieval", "Total Pipeline"]
+        means = [full_report['latency']['intent']['mean'], full_report['latency']['retrieval']['mean'], full_report['latency']['total']['mean']]
+        p95s = [full_report['latency']['intent']['p95'], full_report['latency']['retrieval']['p95'], full_report['latency']['total']['p95']]
+
+        x = np.arange(len(stages))
+        width = 0.35
+
+        fig_lat, ax_lat = plt.subplots(figsize=(8, 5))
+        rects1 = ax_lat.bar(x - width/2, means, width, label='Mean Latency', color='skyblue')
+        rects2 = ax_lat.bar(x + width/2, p95s, width, label='P95 Latency', color='salmon')
+
+        ax_lat.set_ylabel('Time (ms)')
+        ax_lat.set_title('Pipeline Latency Benchmarks (CPU)')
+        ax_lat.set_xticks(x)
+        ax_lat.set_xticklabels(stages)
+        ax_lat.legend()
+
+        ax_lat.bar_label(rects1, fmt='%.1f', padding=3)
+        ax_lat.bar_label(rects2, fmt='%.1f', padding=3)
+
+        fig_lat.tight_layout()
+        fig_lat.savefig(latency_png, dpi=200)
+        plt.close(fig_lat)
+
         summary = (
             "NEPALI STUDENT VOICE ASSISTANT - EVALUATION REPORT\n"
             "============================================================\n\n"
@@ -262,6 +288,7 @@ def main():
             "[C] VISUALIZATIONS\n"
             f"  Confusion matrix heatmap: {OUTPUTS_DIR / 'confusion_matrix_eval.png'}\n"
             f"  Accuracy results table  : {table_png}\n"
+            f"  Latency bar chart       : {latency_png}\n"
         )
         with open(eval_txt, "w", encoding="utf-8") as f:
             f.write(summary)
