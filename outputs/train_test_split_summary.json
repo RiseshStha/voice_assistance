@@ -1,0 +1,21 @@
+{
+  "train_rows": 2519,
+  "test_rows": 630,
+  "train_intent_counts_before_smote": {
+    "arts_question": 97,
+    "health_question": 172,
+    "nepali_language_question": 641,
+    "physical_education_question": 82,
+    "science_question": 911,
+    "social_question": 616
+  },
+  "test_intent_counts_untouched": {
+    "arts_question": 24,
+    "health_question": 43,
+    "nepali_language_question": 161,
+    "physical_education_question": 20,
+    "science_question": 228,
+    "social_question": 154
+  },
+  "smote_policy": "SMOTE applied only on training folds; test set remains original and untouched."
+}

@@ -1,0 +1,68 @@
+{
+  "raw_file": "D:\\Data Science\\Machine Learning\\Projects\\Research_Assignment\\Nepali_Voice_Assistant\\data\\data_for_training\\question_answer_final_updated.xlsx",
+  "clean_output": "D:\\Data Science\\Machine Learning\\Projects\\Research_Assignment\\Nepali_Voice_Assistant\\data\\data_for_training\\question_answer_clean.xlsx",
+  "balanced_output": "D:\\Data Science\\Machine Learning\\Projects\\Research_Assignment\\Nepali_Voice_Assistant\\data\\data_for_training\\question_answer_smote_balanced.xlsx",
+  "cleaning": {
+    "raw_rows": 3149,
+    "raw_columns": [
+      "question",
+      "answer",
+      "intent",
+      "subject",
+      "grade"
+    ],
+    "duplicate_rows": 257,
+    "duplicate_questions": 307,
+    "blank_questions_after_cleaning": 0,
+    "blank_answers_after_cleaning": 0,
+    "missing_grades_after_cleaning": 0
+  },
+  "class_coverage": {
+    "expected_intents": [
+      "arts_question",
+      "health_question",
+      "nepali_language_question",
+      "physical_education_question",
+      "science_question",
+      "social_question"
+    ],
+    "present_intents": [
+      "arts_question",
+      "health_question",
+      "nepali_language_question",
+      "physical_education_question",
+      "science_question",
+      "social_question"
+    ],
+    "missing_intents": [],
+    "unexpected_intents": [],
+    "all_expected_classes_available": true,
+    "present_class_count": 6
+  },
+  "smote": {
+    "target_per_class": 1139,
+    "k_neighbors": 5,
+    "total_rows_after_smote": 6834,
+    "synthetic_rows_added": 3685,
+    "intent_counts_before": {
+      "arts_question": 121,
+      "health_question": 215,
+      "nepali_language_question": 802,
+      "physical_education_question": 102,
+      "science_question": 1139,
+      "social_question": 770
+    },
+    "intent_counts_after": {
+      "arts_question": 1139,
+      "health_question": 1139,
+      "nepali_language_question": 1139,
+      "physical_education_question": 1139,
+      "science_question": 1139,
+      "social_question": 1139
+    },
+    "origin_counts": {
+      "original": 3149,
+      "smote_generated": 3685
+    }
+  }
+}

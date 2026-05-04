@@ -1,0 +1,147 @@
+{
+  "intent_accuracy": {
+    "test_samples": 630,
+    "accuracy": 0.7111111111111111,
+    "accuracy_pct": 71.11,
+    "macro_f1": 0.6910503119179386,
+    "weighted_f1": 0.711925376181319,
+    "report": {
+      "arts_question": {
+        "precision": 0.75,
+        "recall": 0.625,
+        "f1-score": 0.6818181818181818,
+        "support": 24.0
+      },
+      "health_question": {
+        "precision": 0.46153846153846156,
+        "recall": 0.5581395348837209,
+        "f1-score": 0.5052631578947369,
+        "support": 43.0
+      },
+      "nepali_language_question": {
+        "precision": 0.7225433526011561,
+        "recall": 0.7763975155279503,
+        "f1-score": 0.7485029940119761,
+        "support": 161.0
+      },
+      "physical_education_question": {
+        "precision": 0.7391304347826086,
+        "recall": 0.85,
+        "f1-score": 0.7906976744186046,
+        "support": 20.0
+      },
+      "science_question": {
+        "precision": 0.7660550458715596,
+        "recall": 0.7324561403508771,
+        "f1-score": 0.7488789237668162,
+        "support": 228.0
+      },
+      "social_question": {
+        "precision": 0.6944444444444444,
+        "recall": 0.6493506493506493,
+        "f1-score": 0.6711409395973155,
+        "support": 154.0
+      },
+      "accuracy": 0.7111111111111111,
+      "macro avg": {
+        "precision": 0.6889519565397051,
+        "recall": 0.6985573066855331,
+        "f1-score": 0.6910503119179386,
+        "support": 630.0
+      },
+      "weighted avg": {
+        "precision": 0.7151797416091304,
+        "recall": 0.7111111111111111,
+        "f1-score": 0.711925376181319,
+        "support": 630.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        15,
+        1,
+        2,
+        0,
+        5,
+        1
+      ],
+      [
+        0,
+        24,
+        3,
+        1,
+        12,
+        3
+      ],
+      [
+        1,
+        3,
+        125,
+        1,
+        11,
+        20
+      ],
+      [
+        0,
+        1,
+        0,
+        17,
+        2,
+        0
+      ],
+      [
+        3,
+        18,
+        18,
+        2,
+        167,
+        20
+      ],
+      [
+        1,
+        5,
+        25,
+        2,
+        21,
+        100
+      ]
+    ],
+    "labels": [
+      "arts_question",
+      "health_question",
+      "nepali_language_question",
+      "physical_education_question",
+      "science_question",
+      "social_question"
+    ],
+    "artifacts": {
+      "confusion_matrix_heatmap_png": "D:\\Data Science\\Machine Learning\\Projects\\Research_Assignment\\Nepali_Voice_Assistant\\outputs\\confusion_matrix_eval.png",
+      "accuracy_table_png": "D:\\Data Science\\Machine Learning\\Projects\\Research_Assignment\\Nepali_Voice_Assistant\\outputs\\accuracy_table.png"
+    }
+  },
+  "latency": {
+    "n_queries": 50,
+    "with_tts": false,
+    "intent": {
+      "mean": 54.83562399967923,
+      "median": 54.8300000045856,
+      "p95": 63.805554998180014,
+      "max": 70.60859999910463,
+      "min": 42.08379999909084
+    },
+    "retrieval": {
+      "mean": 3.86235600017244,
+      "median": 3.841150002699578,
+      "p95": 5.577344998164335,
+      "max": 7.550700000138022,
+      "min": 1.5085000050021335
+    },
+    "total": {
+      "mean": 72.06225399990217,
+      "median": 73.23564999751397,
+      "p95": 84.4004299990047,
+      "max": 91.10749999672407,
+      "min": 47.41210000065621
+    }
+  }
+}

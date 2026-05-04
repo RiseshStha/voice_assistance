@@ -1,0 +1,51 @@
+{
+  "arts_question": {
+    "precision": 0.75,
+    "recall": 0.625,
+    "f1-score": 0.6818181818181818,
+    "support": 24.0
+  },
+  "health_question": {
+    "precision": 0.46153846153846156,
+    "recall": 0.5581395348837209,
+    "f1-score": 0.5052631578947369,
+    "support": 43.0
+  },
+  "nepali_language_question": {
+    "precision": 0.7225433526011561,
+    "recall": 0.7763975155279503,
+    "f1-score": 0.7485029940119761,
+    "support": 161.0
+  },
+  "physical_education_question": {
+    "precision": 0.7391304347826086,
+    "recall": 0.85,
+    "f1-score": 0.7906976744186046,
+    "support": 20.0
+  },
+  "science_question": {
+    "precision": 0.7660550458715596,
+    "recall": 0.7324561403508771,
+    "f1-score": 0.7488789237668162,
+    "support": 228.0
+  },
+  "social_question": {
+    "precision": 0.6944444444444444,
+    "recall": 0.6493506493506493,
+    "f1-score": 0.6711409395973155,
+    "support": 154.0
+  },
+  "accuracy": 0.7111111111111111,
+  "macro avg": {
+    "precision": 0.6889519565397051,
+    "recall": 0.6985573066855331,
+    "f1-score": 0.6910503119179386,
+    "support": 630.0
+  },
+  "weighted avg": {
+    "precision": 0.7151797416091304,
+    "recall": 0.7111111111111111,
+    "f1-score": 0.711925376181319,
+    "support": 630.0
+  }
+}

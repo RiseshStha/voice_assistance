@@ -1,0 +1,17 @@
+NEPALI STUDENT VOICE ASSISTANT - EVALUATION REPORT
+============================================================
+
+[A] INTENT CLASSIFICATION (SVM)
+  Test Accuracy  : 71.11%
+  Macro F1       : 69.11%
+  Weighted F1    : 71.19%
+
+[B] LATENCY (ms) - per query (no TTS)
+  Intent   mean/p95 : 54.8 / 63.8 ms
+  Retrieval mean/p95: 3.9 / 5.6 ms
+  Total mean/p95    : 72.1 / 84.4 ms
+
+[C] VISUALIZATIONS
+  Confusion matrix heatmap: D:\Data Science\Machine Learning\Projects\Research_Assignment\Nepali_Voice_Assistant\outputs\confusion_matrix_eval.png
+  Accuracy results table  : D:\Data Science\Machine Learning\Projects\Research_Assignment\Nepali_Voice_Assistant\outputs\accuracy_table.png
+  Latency bar chart       : D:\Data Science\Machine Learning\Projects\Research_Assignment\Nepali_Voice_Assistant\outputs\fig_latency.png
