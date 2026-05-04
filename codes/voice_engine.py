@@ -30,7 +30,7 @@ def load_stt_model():
 # RECORD AUDIO
 # ---------------------------
 def record_audio(duration=5, device=None):
-    print("🎤 Listening...")
+    print("Listening...")
 
     audio = sd.rec(
         int(duration * SAMPLE_RATE),
@@ -75,7 +75,7 @@ def clean_text(text: str) -> str:
 # TRANSCRIPTION
 
 def transcribe(model, audio):
-    print("🧠 Transcribing...")
+    print("Transcribing...")
 
     segments, _ = model.transcribe(
         audio,
